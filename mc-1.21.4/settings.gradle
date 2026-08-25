@@ -1,0 +1,18 @@
+pluginManagement {
+	repositories {
+		maven {
+			name = 'Fabric'
+			url = 'https://maven.fabricmc.net/'
+		}
+		mavenCentral()
+		gradlePluginPortal()
+	}
+}
+
+// Тот же плагин, что в основном проекте: сам находит нужный JDK, а если его в
+// системе нет — скачивает. Здесь он нужен и демону (см. gradle-daemon-jvm.properties).
+plugins {
+	id 'org.gradle.toolchains.foojay-resolver-convention' version '1.0.0'
+}
+
+rootProject.name = 'manul-1.21.4'

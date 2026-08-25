@@ -1,0 +1,8 @@
+{
+	"entity.manul.ambient": {
+		"subtitle": "subtitles.entity.manul.ambient",
+		"sounds": [
+			"manul:ambient1"
+		]
+	}
+}

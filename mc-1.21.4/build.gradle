@@ -1,0 +1,77 @@
+plugins {
+	// До 1.14 плагин публиковался под коротким id.
+	id 'fabric-loom' version "${loom_version}"
+}
+
+version = project.version
+group = project.group
+
+base {
+	archivesName = project.archives_base_name
+}
+
+repositories {
+}
+
+loom {
+	splitEnvironmentSourceSets()
+
+	mods {
+		"manul" {
+			sourceSet sourceSets.main
+			sourceSet sourceSets.client
+		}
+	}
+}
+
+dependencies {
+	minecraft "com.mojang:minecraft:${project.minecraft_version}"
+	// Loom этого поколения не подставляет маппинги сам, их нужно назвать явно.
+	mappings loom.officialMojangMappings()
+	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
+}
+
+processResources {
+	def version = project.version
+	inputs.property "version", version
+
+	filesMatching("fabric.mod.json") {
+		expand "version": version
+	}
+}
+
+// Minecraft 1.21.4 собран под Java 21, поэтому и байткод мода должен быть 21-м.
+// Сам компилятор при этом остаётся 25-м (см. toolchain): JDK 25 умеет собирать
+// под release 21, и тогда не нужен второй JDK в системе.
+tasks.withType(JavaCompile).configureEach {
+	it.options.release = 21
+	it.options.encoding = "UTF-8"
+}
+
+java {
+	withSourcesJar()
+
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(25)
+	}
+}
+
+// Сама игра 1.21.4 рассчитана на Java 21: под 25-й её Mixin не читает классы
+// («Unsupported class file major version 69») и запуск падает. Собирать 25-м можно,
+// запускать — нет, поэтому runClient/runServer берут JDK 21 (путь к нему указан
+// в gradle.properties, чтобы Gradle не полез качать свой).
+tasks.withType(net.fabricmc.loom.task.AbstractRunTask).configureEach {
+	javaLauncher = javaToolchains.launcherFor {
+		languageVersion = JavaLanguageVersion.of(21)
+	}
+}
+
+jar {
+	def projectName = project.name
+	inputs.property "projectName", projectName
+
+	from("LICENSE") {
+		rename { "${it}_$projectName" }
+	}
+}
