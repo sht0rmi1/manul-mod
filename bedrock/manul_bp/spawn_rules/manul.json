@@ -1,0 +1,46 @@
+{
+	"format_version": "1.8.0",
+	"minecraft:spawn_rules": {
+		"description": {
+			"identifier": "manul:manul",
+			"population_control": "animal"
+		},
+		"conditions": [
+			{
+				"minecraft:spawns_on_surface": {},
+				"minecraft:weight": {
+					"default": 8
+				},
+				"minecraft:herd": {
+					"min_size": 1,
+					"max_size": 2
+				},
+				"minecraft:biome_filter": {
+					"any_of": [
+						{ "test": "has_biome_tag", "operator": "==", "value": "ice_plains" },
+						{ "test": "has_biome_tag", "operator": "==", "value": "snowy_slopes" },
+						{ "test": "has_biome_tag", "operator": "==", "value": "grove" },
+						{ "test": "has_biome_tag", "operator": "==", "value": "meadow" },
+						{ "test": "has_biome_tag", "operator": "==", "value": "extreme_hills" },
+						{
+							"all_of": [
+								{ "test": "has_biome_tag", "operator": "==", "value": "savanna" },
+								{ "test": "has_biome_tag", "operator": "==", "value": "plateau" }
+							]
+						},
+						{
+							"all_of": [
+								{ "test": "has_biome_tag", "operator": "==", "value": "mountains" },
+								{ "test": "has_biome_tag", "operator": "not", "value": "jagged_peaks" },
+								{ "test": "has_biome_tag", "operator": "not", "value": "frozen_peaks" },
+								{ "test": "has_biome_tag", "operator": "not", "value": "snowy_slopes" },
+								{ "test": "has_biome_tag", "operator": "not", "value": "grove" },
+								{ "test": "has_biome_tag", "operator": "not", "value": "meadow" }
+							]
+						}
+					]
+				}
+			}
+		]
+	}
+}

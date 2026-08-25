@@ -34,3 +34,6 @@ Thumbs.db
 # Python (генератор текстур)
 __pycache__/
 *.pyc
+
+# Собранный бедрок-аддон
+bedrock/dist/

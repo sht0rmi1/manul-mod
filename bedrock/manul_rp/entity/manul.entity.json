@@ -1,0 +1,46 @@
+{
+	"format_version": "1.10.0",
+	"minecraft:client_entity": {
+		"description": {
+			"identifier": "manul:manul",
+			"materials": {
+				"default": "entity_alphatest"
+			},
+			"textures": {
+				"grey": "textures/entity/manul/manul",
+				"ginger": "textures/entity/manul/manul_ginger"
+			},
+			"geometry": {
+				"default": "geometry.manul"
+			},
+			"animations": {
+				"look_at_target": "animation.common.look_at_target",
+				"baby_head": "animation.manul.baby_head",
+				"walk": "animation.manul.walk",
+				"idle_tail": "animation.manul.idle_tail",
+				"sit": "animation.manul.sit",
+				"hiss": "animation.manul.hiss",
+				"voice": "animation.manul.voice",
+				"purr": "animation.manul.purr"
+			},
+			"animation_controllers": [
+				{
+					"move": "controller.animation.manul.move"
+				}
+			],
+			"scripts": {
+				"animate": [
+					"look_at_target",
+					{ "baby_head": "q.is_baby" },
+					"voice",
+					{ "purr": "q.is_sitting && q.is_tamed" }
+				]
+			},
+			"render_controllers": ["controller.render.manul"],
+			"spawn_egg": {
+				"base_color": "#8d8471",
+				"overlay_color": "#c98a4b"
+			}
+		}
+	}
+}

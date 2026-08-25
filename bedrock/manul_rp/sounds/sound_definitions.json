@@ -1,0 +1,57 @@
+{
+	"format_version": "1.14.0",
+	"sound_definitions": {
+		"mob.manul.ambient": {
+			"category": "neutral",
+			"sounds": [
+				{ "name": "sounds/mob/manul/ambient1", "volume": 1.0, "load_on_low_memory": true }
+			]
+		},
+		"mob.manul.hiss": {
+			"category": "neutral",
+			"sounds": [
+				{ "name": "sounds/mob/cat/hiss1", "volume": 0.9, "pitch": [0.7, 0.9] },
+				{ "name": "sounds/mob/cat/hiss2", "volume": 0.9, "pitch": [0.7, 0.9] },
+				{ "name": "sounds/mob/cat/hiss3", "volume": 0.9, "pitch": [0.7, 0.9] }
+			]
+		},
+		"mob.manul.purr": {
+			"category": "neutral",
+			"sounds": [
+				{ "name": "sounds/mob/cat/purr1", "volume": 0.5, "pitch": [0.7, 0.9] },
+				{ "name": "sounds/mob/cat/purr2", "volume": 0.5, "pitch": [0.7, 0.9] },
+				{ "name": "sounds/mob/cat/purr3", "volume": 0.5, "pitch": [0.7, 0.9] }
+			]
+		},
+		"mob.manul.hurt": {
+			"category": "neutral",
+			"sounds": [
+				{ "name": "sounds/mob/cat/hitt1", "volume": 0.9 },
+				{ "name": "sounds/mob/cat/hitt2", "volume": 0.9 },
+				{ "name": "sounds/mob/cat/hitt3", "volume": 0.9 }
+			]
+		},
+		"manul.ambient": {
+			"category": "neutral",
+			"sounds": [
+				{ "name": "sounds/mob/manul/ambient1", "volume": 1.0 }
+			]
+		},
+		"manul.hiss": {
+			"category": "neutral",
+			"sounds": [
+				{ "name": "sounds/mob/cat/hiss1", "volume": 0.9, "pitch": [0.7, 0.9] },
+				{ "name": "sounds/mob/cat/hiss2", "volume": 0.9, "pitch": [0.7, 0.9] },
+				{ "name": "sounds/mob/cat/hiss3", "volume": 0.9, "pitch": [0.7, 0.9] }
+			]
+		},
+		"manul.purr": {
+			"category": "neutral",
+			"sounds": [
+				{ "name": "sounds/mob/cat/purr1", "volume": 0.5, "pitch": [0.7, 0.9] },
+				{ "name": "sounds/mob/cat/purr2", "volume": 0.5, "pitch": [0.7, 0.9] },
+				{ "name": "sounds/mob/cat/purr3", "volume": 0.5, "pitch": [0.7, 0.9] }
+			]
+		}
+	}
+}

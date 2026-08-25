@@ -1,0 +1,21 @@
+{
+	"format_version": 2,
+	"header": {
+		"name": "pack.name",
+		"description": "pack.description",
+		"uuid": "b390442e-802f-494a-b138-fda636328594",
+		"version": [1, 0, 0],
+		"min_engine_version": [1, 21, 0]
+	},
+	"modules": [
+		{
+			"type": "resources",
+			"uuid": "51570f88-1939-4fdb-ba80-b415cc0f04c9",
+			"version": [1, 0, 0]
+		}
+	],
+	"metadata": {
+		"authors": ["sht0rmi"],
+		"license": "MIT"
+	}
+}

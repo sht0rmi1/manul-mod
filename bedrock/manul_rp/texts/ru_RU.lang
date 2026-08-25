@@ -1,0 +1,4 @@
+pack.name=Манулы (ресурсы)
+pack.description=Модель, текстуры и звуки манула
+entity.manul:manul.name=Манул
+item.spawn_egg.entity.manul:manul.name=Яйцо призыва манула

@@ -1,0 +1,507 @@
+{
+	"format_version": "1.21.0",
+	"minecraft:entity": {
+		"description": {
+			"identifier": "manul:manul",
+			"spawn_category": "creature",
+			"is_spawnable": true,
+			"is_summonable": true
+		},
+		"component_groups": {
+			"manul:baby": {
+				"minecraft:is_baby": {},
+				"minecraft:scale": {
+					"value": 0.5
+				},
+				"minecraft:collision_box": {
+					"width": 0.4,
+					"height": 0.35
+				},
+				"minecraft:ageable": {
+					"duration": 1200,
+					"feed_items": ["rabbit", "cod", "fish", "salmon"],
+					"grow_up": {
+						"event": "minecraft:ageable_grow_up",
+						"target": "self"
+					}
+				}
+			},
+			"manul:adult": {
+				"minecraft:collision_box": {
+					"width": 0.8,
+					"height": 0.7
+				}
+			},
+			"manul:grey": {
+				"minecraft:variant": {
+					"value": 0
+				}
+			},
+			"manul:ginger": {
+				"minecraft:variant": {
+					"value": 1
+				}
+			},
+			"manul:wild_feeding": {
+				"minecraft:interact": {
+					"interactions": [
+						{
+							"on_interact": {
+								"filters": {
+									"all_of": [
+										{ "test": "is_family", "subject": "other", "value": "player" },
+										{
+											"any_of": [
+												{ "test": "has_equipment", "subject": "other", "domain": "hand", "value": "rabbit" },
+												{ "test": "has_equipment", "subject": "other", "domain": "hand", "value": "cod" },
+												{ "test": "has_equipment", "subject": "other", "domain": "hand", "value": "salmon" },
+												{ "test": "has_equipment", "subject": "other", "domain": "hand", "value": "tropical_fish" }
+											]
+										}
+									]
+								},
+								"event": "manul:feed",
+								"target": "self"
+							},
+							"use_item": true,
+							"swing": true,
+							"particle_on_start": {
+								"particle_type": "heart",
+								"particle_y_offset": 0.6,
+								"particle_offset_towards_interactor": true
+							}
+						}
+					]
+				}
+			},
+			"manul:shy": {
+				"minecraft:behavior.avoid_mob_type": {
+					"priority": 2,
+					"entity_types": [
+						{
+							"filters": {
+								"all_of": [
+									{ "test": "is_family", "subject": "other", "value": "player" },
+									{ "test": "is_sneak_held", "subject": "other", "operator": "==", "value": false }
+								]
+							},
+							"max_dist": 10,
+							"walk_speed_multiplier": 0.9,
+							"sprint_speed_multiplier": 1.35
+						}
+					]
+				},
+				"minecraft:environment_sensor": {
+					"triggers": [
+						{
+							"filters": {
+								"all_of": [
+									{ "test": "has_component", "subject": "self", "operator": "!=", "value": "minecraft:mark_variant" },
+									{ "test": "distance_to_nearest_player", "subject": "self", "operator": "<=", "value": 5.0 }
+								]
+							},
+							"event": "manul:start_hiss",
+							"target": "self"
+						}
+					]
+				}
+			},
+			"manul:hissing": {
+				"minecraft:mark_variant": {
+					"value": 1
+				},
+				"minecraft:movement": {
+					"value": 0.0
+				},
+				"minecraft:behavior.look_at_player": {
+					"priority": 1,
+					"look_distance": 8,
+					"probability": 1.0
+				},
+				"minecraft:timer": {
+					"looping": false,
+					"time": [1.5, 3.0],
+					"time_down_event": {
+						"event": "manul:stop_hiss",
+						"target": "self"
+					}
+				}
+			},
+			"manul:trust_1": {
+				"minecraft:type_family": {
+					"family": ["manul", "mob", "trust_1"]
+				}
+			},
+			"manul:trust_2": {
+				"minecraft:type_family": {
+					"family": ["manul", "mob", "trust_2"]
+				}
+			},
+			"manul:trust_3": {
+				"minecraft:type_family": {
+					"family": ["manul", "mob", "trust_3"]
+				}
+			},
+			"manul:trust_4": {
+				"minecraft:type_family": {
+					"family": ["manul", "mob", "trust_4"]
+				}
+			},
+			"manul:trust_5": {
+				"minecraft:type_family": {
+					"family": ["manul", "mob", "trust_5"]
+				}
+			},
+			"manul:trust_6": {
+				"minecraft:type_family": {
+					"family": ["manul", "mob", "trust_6"]
+				}
+			},
+			"manul:trust_7": {
+				"minecraft:type_family": {
+					"family": ["manul", "mob", "trust_7"]
+				}
+			},
+			"manul:tameable": {
+				"minecraft:tameable": {
+					"probability": 0.33,
+					"tame_items": ["rabbit", "cod", "salmon", "tropical_fish"],
+					"tame_event": {
+						"event": "minecraft:on_tame",
+						"target": "self"
+					}
+				}
+			},
+			"manul:tamed": {
+				"minecraft:is_tamed": {},
+				"minecraft:persistent": {},
+				"minecraft:healable": {
+					"force_use": false,
+					"items": [
+						{ "item": "rabbit", "heal_amount": 3 },
+						{ "item": "cod", "heal_amount": 3 },
+						{ "item": "salmon", "heal_amount": 3 },
+						{ "item": "tropical_fish", "heal_amount": 3 }
+					]
+				},
+				"minecraft:breedable": {
+					"require_tame": true,
+					"require_full_health": true,
+					"breeds_with": {
+						"mate_type": "manul:manul",
+						"baby_type": "manul:manul",
+						"breed_event": {
+							"event": "minecraft:entity_born",
+							"target": "baby"
+						}
+					},
+					"breed_items": ["rabbit", "cod", "salmon", "tropical_fish"],
+					"inherit_tamed": true,
+					"mutation_factor": {
+						"variant": 0.0625
+					}
+				},
+				"minecraft:behavior.breed": {
+					"priority": 3,
+					"speed_multiplier": 1.0
+				},
+				"minecraft:behavior.follow_owner": {
+					"priority": 5,
+					"speed_multiplier": 1.0,
+					"start_distance": 10.0,
+					"stop_distance": 4.0
+				},
+				"minecraft:behavior.stay_while_sitting": {
+					"priority": 4
+				},
+				"minecraft:behavior.owner_hurt_by_target": {
+					"priority": 1
+				},
+				"minecraft:behavior.owner_hurt_target": {
+					"priority": 2
+				}
+			}
+		},
+		"components": {
+			"minecraft:type_family": {
+				"family": ["manul", "mob"]
+			},
+			"minecraft:collision_box": {
+				"width": 0.8,
+				"height": 0.7
+			},
+			"minecraft:health": {
+				"value": 10,
+				"max": 10
+			},
+			"minecraft:attack": {
+				"damage": 3
+			},
+			"minecraft:movement": {
+				"value": 0.32
+			},
+			"minecraft:movement.basic": {},
+			"minecraft:navigation.walk": {
+				"can_path_over_water": false,
+				"avoid_water": true,
+				"avoid_damage_blocks": true
+			},
+			"minecraft:jump.static": {},
+			"minecraft:can_climb": {},
+			"minecraft:physics": {},
+			"minecraft:pushable": {
+				"is_pushable": true,
+				"is_pushable_by_piston": true
+			},
+			"minecraft:breathable": {
+				"total_supply": 15,
+				"suffocate_time": 0
+			},
+			"minecraft:nameable": {},
+			"minecraft:leashable": {
+				"soft_distance": 4.0,
+				"hard_distance": 6.0,
+				"max_distance": 10.0
+			},
+			"minecraft:sittable": {},
+			"minecraft:loot": {
+				"table": "loot_tables/entities/manul.json"
+			},
+			"minecraft:hurt_on_condition": {
+				"damage_conditions": [
+					{
+						"filters": { "test": "in_lava", "subject": "self", "operator": "==", "value": true },
+						"cause": "lava",
+						"damage_per_tick": 4
+					}
+				]
+			},
+			"minecraft:damage_sensor": {
+				"triggers": [
+					{
+						"cause": "entity_attack",
+						"deals_damage": true,
+						"on_damage_sound_event": "mob.manul.hurt",
+						"on_damage": {
+							"filters": { "test": "is_family", "subject": "other", "value": "player" },
+							"event": "manul:hurt_by_player",
+							"target": "self"
+						}
+					}
+				]
+			},
+			"minecraft:behavior.float": {
+				"priority": 0
+			},
+			"minecraft:behavior.hurt_by_target": {
+				"priority": 1
+			},
+			"minecraft:behavior.leap_at_target": {
+				"priority": 6,
+				"yd": 0.3,
+				"must_be_on_ground": false
+			},
+			"minecraft:behavior.melee_attack": {
+				"priority": 7,
+				"speed_multiplier": 1.0,
+				"track_target": true
+			},
+			"minecraft:behavior.nearest_attackable_target": {
+				"priority": 5,
+				"reselect_targets": true,
+				"within_radius": 16.0,
+				"entity_types": [
+					{
+						"filters": { "test": "is_family", "subject": "other", "value": "rabbit" },
+						"max_dist": 8
+					}
+				]
+			},
+			"minecraft:behavior.tempt": {
+				"priority": 8,
+				"speed_multiplier": 0.6,
+				"within_radius": 8.0,
+				"can_get_scared": true,
+				"items": ["rabbit", "cod", "salmon", "tropical_fish"]
+			},
+			"minecraft:behavior.random_sitting": {
+				"priority": 9,
+				"cooldown_time": 30,
+				"min_sit_time": 10,
+				"start_chance": 0.02,
+				"stop_chance": 0.01
+			},
+			"minecraft:behavior.random_stroll": {
+				"priority": 10,
+				"speed_multiplier": 0.7,
+				"interval": 120
+			},
+			"minecraft:behavior.look_at_player": {
+				"priority": 11,
+				"look_distance": 8.0,
+				"probability": 0.02
+			},
+			"minecraft:behavior.random_look_around": {
+				"priority": 12
+			}
+		},
+		"events": {
+			"minecraft:entity_spawned": {
+				"sequence": [
+					{
+						"randomize": [
+							{ "weight": 19, "add": { "component_groups": ["manul:adult"] } },
+							{ "weight": 1, "add": { "component_groups": ["manul:baby"] } }
+						]
+					},
+					{
+						"randomize": [
+							{ "weight": 7, "add": { "component_groups": ["manul:grey"] } },
+							{ "weight": 1, "add": { "component_groups": ["manul:ginger"] } }
+						]
+					},
+					{
+						"add": {
+							"component_groups": ["manul:trust_1", "manul:shy", "manul:wild_feeding"]
+						}
+					}
+				]
+			},
+			"minecraft:entity_born": {
+				"add": {
+					"component_groups": ["manul:baby", "manul:tamed"]
+				}
+			},
+			"minecraft:ageable_grow_up": {
+				"remove": {
+					"component_groups": ["manul:baby"]
+				},
+				"add": {
+					"component_groups": ["manul:adult"]
+				}
+			},
+			"minecraft:on_tame": {
+				"remove": {
+					"component_groups": ["manul:trust_7", "manul:tameable", "manul:wild_feeding", "manul:shy"]
+				},
+				"add": {
+					"component_groups": ["manul:tamed"]
+				}
+			},
+			"manul:feed": {
+				"sequence": [
+					{
+						"filters": { "test": "is_family", "subject": "self", "value": "trust_6" },
+						"remove": { "component_groups": ["manul:trust_6", "manul:wild_feeding"] },
+						"add": { "component_groups": ["manul:trust_7", "manul:tameable"] }
+					},
+					{
+						"filters": { "test": "is_family", "subject": "self", "value": "trust_5" },
+						"remove": { "component_groups": ["manul:trust_5"] },
+						"add": { "component_groups": ["manul:trust_6"] }
+					},
+					{
+						"filters": { "test": "is_family", "subject": "self", "value": "trust_4" },
+						"remove": { "component_groups": ["manul:trust_4"] },
+						"add": { "component_groups": ["manul:trust_5"] }
+					},
+					{
+						"filters": { "test": "is_family", "subject": "self", "value": "trust_3" },
+						"remove": { "component_groups": ["manul:trust_3", "manul:shy"] },
+						"add": { "component_groups": ["manul:trust_4"] }
+					},
+					{
+						"filters": { "test": "is_family", "subject": "self", "value": "trust_2" },
+						"remove": { "component_groups": ["manul:trust_2"] },
+						"add": { "component_groups": ["manul:trust_3"] }
+					},
+					{
+						"filters": { "test": "is_family", "subject": "self", "value": "trust_1" },
+						"remove": { "component_groups": ["manul:trust_1"] },
+						"add": { "component_groups": ["manul:trust_2"] }
+					}
+				]
+			},
+			"manul:hurt_by_player": {
+				"sequence": [
+					{
+						"filters": { "test": "is_family", "subject": "self", "value": "trust_2" },
+						"remove": { "component_groups": ["manul:trust_2"] },
+						"add": { "component_groups": ["manul:trust_1"] }
+					},
+					{
+						"filters": { "test": "is_family", "subject": "self", "value": "trust_3" },
+						"remove": { "component_groups": ["manul:trust_3"] },
+						"add": { "component_groups": ["manul:trust_1"] }
+					},
+					{
+						"filters": { "test": "is_family", "subject": "self", "value": "trust_4" },
+						"remove": { "component_groups": ["manul:trust_4"] },
+						"add": { "component_groups": ["manul:trust_1", "manul:shy"] }
+					},
+					{
+						"filters": { "test": "is_family", "subject": "self", "value": "trust_5" },
+						"remove": { "component_groups": ["manul:trust_5"] },
+						"add": { "component_groups": ["manul:trust_2", "manul:shy"] }
+					},
+					{
+						"filters": { "test": "is_family", "subject": "self", "value": "trust_6" },
+						"remove": { "component_groups": ["manul:trust_6"] },
+						"add": { "component_groups": ["manul:trust_4"] }
+					},
+					{
+						"filters": { "test": "is_family", "subject": "self", "value": "trust_7" },
+						"remove": { "component_groups": ["manul:trust_7", "manul:tameable"] },
+						"add": { "component_groups": ["manul:trust_5", "manul:wild_feeding"] }
+					}
+				]
+			},
+			"manul:start_hiss": {
+				"add": {
+					"component_groups": ["manul:hissing"]
+				}
+			},
+			"manul:stop_hiss": {
+				"remove": {
+					"component_groups": ["manul:hissing"]
+				}
+			},
+			"manul:become_ginger": {
+				"remove": {
+					"component_groups": ["manul:grey"]
+				},
+				"add": {
+					"component_groups": ["manul:ginger"]
+				}
+			},
+			"manul:become_grey": {
+				"remove": {
+					"component_groups": ["manul:ginger"]
+				},
+				"add": {
+					"component_groups": ["manul:grey"]
+				}
+			},
+			"manul:become_baby": {
+				"remove": {
+					"component_groups": ["manul:adult"]
+				},
+				"add": {
+					"component_groups": ["manul:baby"]
+				}
+			},
+			"manul:make_tame": {
+				"remove": {
+					"component_groups": [
+						"manul:trust_1", "manul:trust_2", "manul:trust_3", "manul:trust_4",
+						"manul:trust_5", "manul:trust_6", "manul:trust_7",
+						"manul:tameable", "manul:wild_feeding", "manul:shy"
+					]
+				},
+				"add": {
+					"component_groups": ["manul:tamed"]
+				}
+			}
+		}
+	}
+}

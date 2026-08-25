@@ -1,0 +1,124 @@
+{
+	"format_version": "1.8.0",
+	"animations": {
+		"animation.manul.walk": {
+			"loop": true,
+			"bones": {
+				"front_left_leg": {
+					"rotation": ["math.cos(q.modified_distance_moved * 74.484) * math.min(q.modified_move_speed, 1.0) * 51.566", 0, 0]
+				},
+				"front_right_leg": {
+					"rotation": ["-math.cos(q.modified_distance_moved * 74.484) * math.min(q.modified_move_speed, 1.0) * 51.566", 0, 0]
+				},
+				"hind_left_leg": {
+					"rotation": ["-math.cos(q.modified_distance_moved * 74.484) * math.min(q.modified_move_speed, 1.0) * 51.566", 0, 0]
+				},
+				"hind_right_leg": {
+					"rotation": ["math.cos(q.modified_distance_moved * 74.484) * math.min(q.modified_move_speed, 1.0) * 51.566", 0, 0]
+				}
+			}
+		},
+		"animation.manul.idle_tail": {
+			"loop": true,
+			"bones": {
+				"tail": {
+					"rotation": [
+						"math.sin(q.life_time * 57.296) * 4.584",
+						"math.sin(q.life_time * 80.214) * 8.594",
+						0
+					]
+				},
+				"tail_tip": {
+					"rotation": [
+						"math.sin(q.life_time * 57.296 - 51.566) * 5.730",
+						"math.sin(q.life_time * 80.214 - 51.566) * 11.459",
+						0
+					]
+				}
+			}
+		},
+		"animation.manul.baby_head": {
+			"loop": true,
+			"bones": {
+				"head": {
+					"scale": 1.35
+				}
+			}
+		},
+		"animation.manul.sit": {
+			"loop": true,
+			"bones": {
+				"body": {
+					"position": [0, -2, 0],
+					"rotation": [-20.05, 0, 0]
+				},
+				"head": {
+					"position": [0, -0.5, -0.5]
+				},
+				"hind_left_leg": {
+					"position": [0, -2, 1],
+					"rotation": [-80.21, 0, 0]
+				},
+				"hind_right_leg": {
+					"position": [0, -2, 1],
+					"rotation": [-80.21, 0, 0]
+				},
+				"tail": {
+					"rotation": [-22.92, 40.11, 0]
+				},
+				"tail_tip": {
+					"rotation": [-14.27, 28.65, 0]
+				}
+			}
+		},
+		"animation.manul.hiss": {
+			"loop": true,
+			"animation_length": 2.5,
+			"bones": {
+				"body": {
+					"position": [0, -1, 0],
+					"rotation": [5.73, 0, 0]
+				},
+				"head": {
+					"position": [0, -0.5, 0],
+					"rotation": [11.46, 0, 0]
+				},
+				"left_ear": {
+					"rotation": [17.19, 0, 45.84]
+				},
+				"right_ear": {
+					"rotation": [17.19, 0, -45.84]
+				},
+				"tail": {
+					"rotation": [20.05, "math.sin(q.life_time * 1031.3) * 17.19", 0]
+				},
+				"tail_tip": {
+					"rotation": [-8.54, "math.sin(q.life_time * 1031.3 - 34.38) * 22.92", 0]
+				}
+			},
+			"sound_effects": {
+				"0.0": {
+					"effect": "hiss"
+				}
+			}
+		},
+		"animation.manul.voice": {
+			"loop": true,
+			"animation_length": 13.7,
+			"sound_effects": {
+				"0.4": {
+					"effect": "ambient"
+				}
+			}
+		},
+		"animation.manul.purr": {
+			"loop": true,
+			"animation_length": 4.0,
+			"sound_effects": {
+				"0.2": {
+					"effect": "purr"
+				}
+			}
+		}
+	}
+}
