@@ -1,0 +1,28 @@
+{
+	"schemaVersion": 1,
+	"id": "manul",
+	"version": "${version}",
+	"name": "Манулы",
+	"description": "Добавляет манула (Otocolobus manul) — приземистую пушистую кошку каменистых степей. Дикий, недоверчивый, шипит, охотится на кроликов и греется на солнце. Приручается не сразу, а через доверие.",
+	"authors": [
+		"sht0rmi"
+	],
+	"contact": {},
+	"license": "MIT",
+	"icon": "assets/manul/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"com.sht0rmi.manul.ManulMod"
+		],
+		"client": [
+			"com.sht0rmi.manul.client.ManulModClient"
+		]
+	},
+	"depends": {
+		"fabricloader": ">=0.19.3",
+		"minecraft": "~26.2",
+		"java": ">=25",
+		"fabric-api": "*"
+	}
+}

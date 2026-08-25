@@ -1,0 +1,36 @@
+# Каталоги сборки
+build/
+out/
+classes/
+
+# Gradle
+.gradle/
+**/build/
+
+# IDEA
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Eclipse
+.classpath
+.project
+.settings/
+bin/
+
+# VS Code
+.vscode/
+
+# Fabric / Loom
+run/
+remappedSrc/
+.architectury-transformer/
+
+# ОС
+.DS_Store
+Thumbs.db
+
+# Python (генератор текстур)
+__pycache__/
+*.pyc

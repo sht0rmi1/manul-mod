@@ -1,0 +1,23 @@
+pluginManagement {
+	repositories {
+		maven {
+			name = 'Fabric'
+			url = 'https://maven.fabricmc.net/'
+		}
+		mavenCentral()
+		gradlePluginPortal()
+	}
+}
+
+// Manul собирается под Java 25, а Gradle может быть запущен на другой версии
+// (например, на системной 21 — тогда компилятор падает с «release version 25 not
+// supported»). Этот плагин учит Gradle самостоятельно находить и, если нужного
+// JDK в системе нет, скачивать его под toolchain из build.gradle.
+//
+// Блок plugins в settings.gradle обязан идти сразу за pluginManagement: до него
+// не должно быть никаких других инструкций, иначе Gradle не примет скрипт.
+plugins {
+	id 'org.gradle.toolchains.foojay-resolver-convention' version '1.0.0'
+}
+
+rootProject.name = 'manul'
