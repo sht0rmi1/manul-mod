@@ -17,4 +17,8 @@ public class ManulRenderState extends LivingEntityRenderState {
 	public float idleTime;
 	/** Рыжий окрас — от него зависит только выбор текстуры. */
 	public boolean isGinger;
+	/** Идёт чесание: зверь тянется к чесалке, уши распущены, хвост трубой. */
+	public boolean isScratched;
+	/** Доля пройденной анимации чесания, 0…1: из неё считается размах позы. */
+	public float scratchProgress;
 }

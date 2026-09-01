@@ -1,0 +1,16 @@
+{
+	"type": "minecraft:crafting_shaped",
+	"category": "equipment",
+	"pattern": [
+		"F",
+		"S"
+	],
+	"key": {
+		"F": "minecraft:feather",
+		"S": "minecraft:stick"
+	},
+	"result": {
+		"id": "manul:manul_scratcher",
+		"count": 1
+	}
+}

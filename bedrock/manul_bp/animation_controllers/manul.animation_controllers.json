@@ -1,0 +1,41 @@
+{
+	"format_version": "1.8.0",
+	"animation_controllers": {
+		"controller.animation.manul.hiss_sound": {
+			"initial_state": "quiet",
+			"states": {
+				"quiet": {
+					"transitions": [{ "hissing": "q.mark_variant == 1" }]
+				},
+				"hissing": {
+					"on_entry": ["/playsound mob.manul.hiss @a[r=16] ~ ~ ~"],
+					"transitions": [{ "quiet": "q.mark_variant != 1" }]
+				}
+			}
+		},
+		"controller.animation.manul.scratch_sound": {
+			"initial_state": "quiet",
+			"states": {
+				"quiet": {
+					"transitions": [{ "scratched": "q.mark_variant == 3" }]
+				},
+				"scratched": {
+					"on_entry": ["/playsound mob.manul.purr @a[r=16] ~ ~ ~"],
+					"transitions": [{ "quiet": "q.mark_variant != 3" }]
+				}
+			}
+		},
+		"controller.animation.manul.purr_sound": {
+			"initial_state": "quiet",
+			"states": {
+				"quiet": {
+					"transitions": [{ "purring": "q.is_sitting && q.is_tamed" }]
+				},
+				"purring": {
+					"animations": ["purr_sound"],
+					"transitions": [{ "quiet": "!q.is_sitting || !q.is_tamed" }]
+				}
+			}
+		}
+	}
+}

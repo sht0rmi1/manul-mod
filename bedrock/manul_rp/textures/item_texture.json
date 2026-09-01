@@ -1,0 +1,12 @@
+{
+	"resource_pack_name": "manul",
+	"texture_name": "atlas.items",
+	"texture_data": {
+		"manul_spawn_egg": {
+			"textures": "textures/items/manul_spawn_egg"
+		},
+		"manul_scratcher": {
+			"textures": "textures/items/manul_scratcher"
+		}
+	}
+}

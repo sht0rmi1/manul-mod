@@ -34,6 +34,8 @@ public class ManulRenderer extends MobRenderer<ManulEntity, ManulRenderState, Ma
 		state.isSitting = manul.isInSittingPose();
 		state.idleTime = manul.tickCount + partialTick;
 		state.isGinger = manul.isGinger();
+		state.isScratched = manul.isBeingScratched();
+		state.scratchProgress = manul.getScratchProgress(partialTick);
 	}
 
 	/**

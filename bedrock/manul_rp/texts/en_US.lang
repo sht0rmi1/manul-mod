@@ -1,4 +1,7 @@
-pack.name=Pallas's Cats (Resources)
+pack.name=Pallas's Cats (Resources) 1.0.9
 pack.description=Model, textures and sounds for the Pallas's cat
 entity.manul:manul.name=Pallas's Cat
 item.spawn_egg.entity.manul:manul.name=Pallas's Cat Spawn Egg
+item.manul:manul_scratcher=Pallas's Cat Scratcher
+item.manul:manul_scratcher.name=Pallas's Cat Scratcher
+action.interact.manul_scratch=Scratch

@@ -1,0 +1,26 @@
+{
+	"entity_sounds": {
+		"entities": {
+			"manul:manul": {
+				"volume": 1.0,
+				"events": {
+					"ambient": "mob.manul.ambient",
+					"hiss": "mob.manul.hiss",
+					"purr": "mob.manul.purr",
+					"hurt": "mob.manul.hurt",
+					"death": "mob.manul.hurt"
+				}
+			},
+			"manul": {
+				"volume": 1.0,
+				"events": {
+					"ambient": "mob.manul.ambient",
+					"hiss": "mob.manul.hiss",
+					"purr": "mob.manul.purr",
+					"hurt": "mob.manul.hurt",
+					"death": "mob.manul.hurt"
+				}
+			}
+		}
+	}
+}

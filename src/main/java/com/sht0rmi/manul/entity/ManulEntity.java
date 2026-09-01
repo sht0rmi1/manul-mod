@@ -3,11 +3,13 @@ package com.sht0rmi.manul.entity;
 import com.sht0rmi.manul.entity.goal.ManulHissGoal;
 import com.sht0rmi.manul.entity.goal.ManulSunbatheGoal;
 import com.sht0rmi.manul.registry.ManulEntities;
+import com.sht0rmi.manul.registry.ManulItems;
 import com.sht0rmi.manul.registry.ManulSounds;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.DifficultyInstance;
@@ -17,6 +19,7 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -65,6 +68,26 @@ public class ManulEntity extends TamableAnimal {
 
 	private static final int TRUST_PER_FEED = 12;
 	private static final int TRUST_LOST_ON_HIT = 25;
+	/** Доверие за одно чесание — втрое меньше, чем за еду: чесалка приятна, но не кормит. */
+	private static final int TRUST_PER_SCRATCH = 4;
+	/**
+	 * Выше этого доверия чесанием не подняться. Порог приручения {@link #TRUST_TAME}
+	 * остаётся за едой — иначе бесконечная чесалка отменяла бы охоту на кроликов.
+	 */
+	private static final int TRUST_SCRATCH_CAP = 60;
+	/** Пауза между чесаниями, тиков. Без неё удержание ПКМ приручало бы за пару секунд. */
+	private static final int SCRATCH_COOLDOWN = 20;
+	/**
+	 * Длина анимации «чешут», тиков. Равна кулдауну: при удержании ПКМ
+	 * следующее чесание начинается ровно там, где кончилось предыдущее, и зверь
+	 * не замирает между движениями.
+	 */
+	public static final int SCRATCH_ANIM_TICKS = SCRATCH_COOLDOWN;
+	/**
+	 * Через сколько тиков после мазка чесалкой манул отвечает урчанием. В один
+	 * тик щётка и урчание накладывались друг на друга и звучали кашей.
+	 */
+	private static final int PURR_DELAY_TICKS = 5;
 	private static final String TAG_TRUST = "Trust";
 	private static final String TAG_GINGER = "Ginger";
 
@@ -79,9 +102,18 @@ public class ManulEntity extends TamableAnimal {
 			SynchedEntityData.defineId(ManulEntity.class, EntityDataSerializers.BOOLEAN);
 	private static final EntityDataAccessor<Boolean> DATA_GINGER =
 			SynchedEntityData.defineId(ManulEntity.class, EntityDataSerializers.BOOLEAN);
+	/** Остаток анимации чесания, тиков. Позу рисует клиент, значит число нужно синхронизировать. */
+	private static final EntityDataAccessor<Integer> DATA_SCRATCH_TICKS =
+			SynchedEntityData.defineId(ManulEntity.class, EntityDataSerializers.INT);
 
 	/** Создаётся в {@link #registerGoals()}; поле без инициализатора — иначе его обнулит порядок конструкторов. */
 	private AvoidEntityGoal<Player> avoidPlayersGoal;
+
+	/**
+	 * Тик, раньше которого следующее чесание не считается. В мир не сохраняется:
+	 * после перезахода манула можно почесать сразу, и это никому не мешает.
+	 */
+	private int nextScratchTick;
 
 	public ManulEntity(EntityType<? extends ManulEntity> type, Level level) {
 		super(type, level);
@@ -128,6 +160,7 @@ public class ManulEntity extends TamableAnimal {
 		builder.define(DATA_TRUST, 0);
 		builder.define(DATA_HISSING, false);
 		builder.define(DATA_GINGER, false);
+		builder.define(DATA_SCRATCH_TICKS, 0);
 	}
 
 	// --- доверие ---------------------------------------------------------------
@@ -171,6 +204,37 @@ public class ManulEntity extends TamableAnimal {
 		this.playSound(SoundEvents.CAT_PURR_BABY.value(), 0.5F, this.getVoicePitch() * 0.8F);
 	}
 
+	// --- чесание: анимация -------------------------------------------------
+
+	/** Идёт ли сейчас анимация чесания. Решение принимает сервер, рисует клиент. */
+	public boolean isBeingScratched() {
+		return this.entityData.get(DATA_SCRATCH_TICKS) > 0;
+	}
+
+	/**
+	 * Доля пройденной анимации, 0…1, с учётом дробного тика — иначе
+	 * покачивание шло бы ступеньками по двадцать в секунду.
+	 */
+	public float getScratchProgress(float partialTick) {
+		float left = this.entityData.get(DATA_SCRATCH_TICKS) - partialTick;
+		return Math.clamp(1.0F - left / SCRATCH_ANIM_TICKS, 0.0F, 1.0F);
+	}
+
+	@Override
+	public void tick() {
+		super.tick();
+
+		// Обратный отсчёт анимации ведёт сервер: клиенту приходит готовое число.
+		int scratchLeft = this.entityData.get(DATA_SCRATCH_TICKS);
+		if (scratchLeft > 0 && !this.level().isClientSide()) {
+			this.entityData.set(DATA_SCRATCH_TICKS, scratchLeft - 1);
+			// Урчание идёт ответом на мазок, а не одновременно с ним.
+			if (scratchLeft - 1 == SCRATCH_ANIM_TICKS - PURR_DELAY_TICKS) {
+				this.playPurrSound();
+			}
+		}
+	}
+
 	// --- окрас -----------------------------------------------------------------
 
 	/**
@@ -199,6 +263,12 @@ public class ManulEntity extends TamableAnimal {
 	public InteractionResult mobInteract(Player player, InteractionHand hand) {
 		ItemStack stack = player.getItemInHand(hand);
 		boolean food = this.isFood(stack);
+
+		// Чесалка идёт первой: у прирученного любой «не еда» в руке — это команда
+		// «сидеть», и без этой ветки чесание сажало бы манула вместо урчания.
+		if (stack.is(ManulItems.MANUL_SCRATCHER)) {
+			return this.scratch(player, stack);
+		}
 
 		if (this.isTame()) {
 			// Раненого лечим едой, сытому едой командуем «сидеть»/«за мной».
@@ -229,6 +299,50 @@ public class ManulEntity extends TamableAnimal {
 		}
 
 		return super.mobInteract(player, hand);
+	}
+
+	/**
+	 * Чесание.
+	 *
+	 * <p>Дикий и пугливый ({@code доверие < }{@link #TRUST_CALM}) чесать себя не даёт —
+	 * шипит, и предмет при этом не изнашивается. Кто уже подпускает, тот урчит и
+	 * понемногу привыкает, но только до {@link #TRUST_SCRATCH_CAP}.
+	 */
+	private InteractionResult scratch(Player player, ItemStack stack) {
+		if (!this.isTame() && this.getTrust() < TRUST_CALM) {
+			if (!this.level().isClientSide()) {
+				this.playHissSound();
+				this.level().broadcastEntityEvent(this, (byte) 6);  // дымок: «не лезь»
+			}
+			return InteractionResult.SUCCESS;
+		}
+
+		if (this.level().isClientSide()) {
+			return InteractionResult.SUCCESS;
+		}
+
+		// Спам-защита: удержанная ПКМ приходит каждый тик, а чесание считается раз в секунду.
+		if (this.tickCount < this.nextScratchTick) {
+			return InteractionResult.CONSUME;
+		}
+		this.nextScratchTick = this.tickCount + SCRATCH_COOLDOWN;
+
+		// Мазок щёткой. Ванильная кисть на 1,4 звучит как метёлка по песку; на
+		// своей высоте она глуше и ближе к щётке по густому меху. Небольшой
+		// разброс — чтобы подряд идущие мазки не звучали одинаково.
+		this.playSound(SoundEvents.BRUSH_GENERIC, 0.6F, 0.95F + this.random.nextFloat() * 0.15F);
+		this.level().broadcastEntityEvent(this, (byte) 7);  // сердечки
+		this.entityData.set(DATA_SCRATCH_TICKS, SCRATCH_ANIM_TICKS);
+
+		if (this.getTrust() < TRUST_SCRATCH_CAP) {
+			this.setTrust(Math.min(this.getTrust() + TRUST_PER_SCRATCH, TRUST_SCRATCH_CAP));
+		}
+		// hurtAndBreak просит именно серверного игрока; в одиночной игре это он и есть.
+		if (this.level() instanceof ServerLevel server && player instanceof ServerPlayer serverPlayer) {
+			stack.hurtAndBreak(1, server, serverPlayer,
+					item -> serverPlayer.onEquippedItemBroken(item, EquipmentSlot.MAINHAND));
+		}
+		return InteractionResult.SUCCESS;
 	}
 
 	/** Кормление дикого манула: копим доверие, после порога — шанс приручения. */

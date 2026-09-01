@@ -1,4 +1,7 @@
-pack.name=Манулы (ресурсы)
+pack.name=Манулы (ресурсы) 1.0.9
 pack.description=Модель, текстуры и звуки манула
 entity.manul:manul.name=Манул
 item.spawn_egg.entity.manul:manul.name=Яйцо призыва манула
+item.manul:manul_scratcher=Чесалка для манула
+item.manul:manul_scratcher.name=Чесалка для манула
+action.interact.manul_scratch=Почесать

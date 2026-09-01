@@ -119,6 +119,50 @@
 					"effect": "purr"
 				}
 			}
+		},
+		"animation.manul.scratched": {
+			"loop": true,
+			"animation_length": 1.5,
+			"bones": {
+				"body": {
+					"position": [0, -0.4, 0],
+					"rotation": [0, 0, "math.sin(q.life_time * 572.96) * 4.584"]
+				},
+				"head": {
+					"position": [0, 0.5, 0],
+					"rotation": [
+						"-18.33 + math.sin(q.life_time * 572.96) * 6.875",
+						0,
+						"17.19 + math.sin(q.life_time * 572.96) * 12.605"
+					]
+				},
+				"left_ear": {
+					"rotation": [-6.875, 0, "22.92 + math.sin(q.life_time * 1604.3) * 4.011"]
+				},
+				"right_ear": {
+					"rotation": [-6.875, 0, "-22.92 - math.sin(q.life_time * 1604.3) * 4.011"]
+				},
+				"front_left_leg": {
+					"rotation": ["math.sin(q.life_time * 572.96) * 6.875", 0, 0]
+				},
+				"front_right_leg": {
+					"rotation": ["-math.sin(q.life_time * 572.96) * 6.875", 0, 0]
+				},
+				"tail": {
+					"rotation": [
+						"-57.28 + math.sin(q.life_time * 1604.3) * 5.730",
+						"math.sin(q.life_time * 1604.3) * 12.605",
+						0
+					]
+				},
+				"tail_tip": {
+					"rotation": [
+						"-31.46 + math.sin(q.life_time * 1604.3) * 8.021",
+						"math.sin(q.life_time * 1604.3 - 40.11) * 17.19",
+						0
+					]
+				}
+			}
 		}
 	}
 }

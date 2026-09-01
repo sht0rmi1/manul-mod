@@ -31,13 +31,13 @@
 				{ "name": "sounds/mob/cat/hitt3", "volume": 0.9 }
 			]
 		},
-		"manul.ambient": {
+		"mob.manul:manul.ambient": {
 			"category": "neutral",
 			"sounds": [
-				{ "name": "sounds/mob/manul/ambient1", "volume": 1.0 }
+				{ "name": "sounds/mob/manul/ambient1", "volume": 1.0, "load_on_low_memory": true }
 			]
 		},
-		"manul.hiss": {
+		"mob.manul:manul.hiss": {
 			"category": "neutral",
 			"sounds": [
 				{ "name": "sounds/mob/cat/hiss1", "volume": 0.9, "pitch": [0.7, 0.9] },
@@ -45,7 +45,7 @@
 				{ "name": "sounds/mob/cat/hiss3", "volume": 0.9, "pitch": [0.7, 0.9] }
 			]
 		},
-		"manul.purr": {
+		"mob.manul:manul.purr": {
 			"category": "neutral",
 			"sounds": [
 				{ "name": "sounds/mob/cat/purr1", "volume": 0.5, "pitch": [0.7, 0.9] },

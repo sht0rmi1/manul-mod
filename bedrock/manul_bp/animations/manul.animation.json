@@ -1,0 +1,19 @@
+{
+	"format_version": "1.8.0",
+	"animations": {
+		"animation.manul.voice_sound": {
+			"loop": true,
+			"animation_length": 13.7,
+			"timeline": {
+				"0.4": "/playsound mob.manul.ambient @a[r=24] ~ ~ ~"
+			}
+		},
+		"animation.manul.purr_sound": {
+			"loop": true,
+			"animation_length": 4.0,
+			"timeline": {
+				"0.2": "/playsound mob.manul.purr @a[r=16] ~ ~ ~"
+			}
+		}
+	}
+}

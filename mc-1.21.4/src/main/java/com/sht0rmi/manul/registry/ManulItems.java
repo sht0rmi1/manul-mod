@@ -18,6 +18,10 @@ public final class ManulItems {
 	private static final ResourceKey<CreativeModeTab> SPAWN_EGGS_TAB =
 			ResourceKey.create(Registries.CREATIVE_MODE_TAB, ResourceLocation.withDefaultNamespace("spawn_eggs"));
 
+	/** Вкладка «Инструменты и утилиты» — сюда встаёт чесалка, рядом с ванильной кистью. */
+	private static final ResourceKey<CreativeModeTab> TOOLS_TAB =
+			ResourceKey.create(Registries.CREATIVE_MODE_TAB, ResourceLocation.withDefaultNamespace("tools_and_utilities"));
+
 	public static final ResourceKey<Item> MANUL_SPAWN_EGG_KEY =
 			ResourceKey.create(Registries.ITEM, ManulMod.id("manul_spawn_egg"));
 
@@ -31,6 +35,22 @@ public final class ManulItems {
 			new SpawnEggItem(ManulEntities.MANUL, new Item.Properties().setId(MANUL_SPAWN_EGG_KEY))
 	);
 
+	public static final ResourceKey<Item> MANUL_SCRATCHER_KEY =
+			ResourceKey.create(Registries.ITEM, ManulMod.id("manul_scratcher"));
+
+	/**
+	 * Чесалка — палка с ворсом. Единственное её назначение: чесать манула
+	 * (см. {@code ManulEntity#scratch}). Не стакается и изнашивается, 96 чесаний.
+	 */
+	public static final Item MANUL_SCRATCHER = Registry.register(
+			BuiltInRegistries.ITEM,
+			MANUL_SCRATCHER_KEY,
+			new Item(new Item.Properties()
+					.setId(MANUL_SCRATCHER_KEY)
+					.stacksTo(1)
+					.durability(96))
+	);
+
 	private ManulItems() {
 	}
 
@@ -38,5 +58,7 @@ public final class ManulItems {
 		// Ставим рядом с оцелотом — соседство по духу.
 		ItemGroupEvents.modifyEntriesEvent(SPAWN_EGGS_TAB).register(
 				entries -> entries.addAfter(Items.OCELOT_SPAWN_EGG, MANUL_SPAWN_EGG));
+		ItemGroupEvents.modifyEntriesEvent(TOOLS_TAB).register(
+				entries -> entries.addAfter(Items.BRUSH, MANUL_SCRATCHER));
 	}
 }

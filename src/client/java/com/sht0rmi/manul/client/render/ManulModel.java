@@ -190,6 +190,21 @@ public class ManulModel extends EntityModel<ManulRenderState> {
 		if (state.isHissing) {
 			this.applyHissingPose(idle);
 		}
+
+		// Чешут. Поза идёт поверх остальных и всегда через размах, поэтому
+		// подмешивается и к стоячему зверю, и к сидячему, ничего не ломая.
+		if (state.isScratched) {
+			this.applyScratchPose(idle, scratchAmount(state.scratchProgress));
+		}
+	}
+
+	/**
+	 * Размах позы чесания по доле прошедшего времени: быстро набирается
+	 * и плавно гаснет. Без этого на первом и последнем кадре зверь
+	 * дёргался бы в позу и из позы рывком.
+	 */
+	private static float scratchAmount(float progress) {
+		return Math.min(1.0F, progress * 8.0F) * Math.min(1.0F, (1.0F - progress) * 4.0F);
 	}
 
 	/**
@@ -245,5 +260,48 @@ public class ManulModel extends EntityModel<ManulRenderState> {
 		this.tail.yRot = Mth.sin(idle * 0.9F) * 0.3F;
 		this.tailTip.xRot = 0.2F;
 		this.tailTip.yRot = Mth.sin(idle * 0.9F - 0.6F) * 0.4F;
+	}
+
+	/**
+	 * Чешут: зверь подставляет голову под чесалку, кренится набок, уши
+	 * распущены, хвост поднят трубой и подрагивает.
+	 *
+	 * <p>Всё считается от уже выставленной позы — углы прибавляются или
+	 * смешиваются через {@code lerp}, а не присваиваются. Поэтому поза ложится
+	 * и на стоячего зверя, и на сидячего, и при {@code amount} = 0 ничего не меняет.
+	 */
+	private void applyScratchPose(float idle, float amount) {
+		// Две разные частоты: медленное «валяние» и мелкая дрожь от удовольствия,
+		// иначе движение выглядит заводным.
+		float lean = Mth.sin(idle * 0.5F);
+		float quiver = Mth.sin(idle * 1.4F);
+
+		// Подбородок кверху (отрицательный xRot), голова кренится набок
+		// и почти отпускает взгляд игрока: манулу сейчас не до него.
+		this.head.xRot += amount * (-0.32F + lean * 0.12F);
+		this.head.zRot += amount * (0.3F + lean * 0.22F);
+		this.head.yRot -= amount * this.head.yRot * 0.5F;
+		this.head.y -= amount * 0.5F;
+
+		// Тело подаётся навстречу и покачивается в такт голове.
+		this.body.zRot += amount * lean * 0.08F;
+		this.body.y += amount * 0.4F;
+
+		// Уши распущены наружу — прямая противоположность прижатым при шипении.
+		this.leftEar.zRot = Mth.lerp(amount, this.leftEar.zRot, 0.85F + quiver * 0.07F);
+		this.rightEar.zRot = Mth.lerp(amount, this.rightEar.zRot, -0.85F - quiver * 0.07F);
+		this.leftEar.xRot = Mth.lerp(amount, this.leftEar.xRot, -0.12F);
+		this.rightEar.xRot = Mth.lerp(amount, this.rightEar.xRot, -0.12F);
+
+		// Передние лапы переминаются, ступни при этом не отрываются.
+		this.frontLeftLeg.xRot += amount * lean * 0.12F;
+		this.frontRightLeg.xRot -= amount * lean * 0.12F;
+
+		// Хвост трубой: отрицательный xRot задирает его к спине, а кончик
+		// отстаёт по фазе, от чего дрожь бежит волной до самого конца.
+		this.tail.xRot = Mth.lerp(amount, this.tail.xRot, -0.45F + quiver * 0.1F);
+		this.tail.yRot = Mth.lerp(amount, this.tail.yRot, quiver * 0.22F);
+		this.tailTip.xRot = Mth.lerp(amount, this.tailTip.xRot, -0.2F + quiver * 0.14F);
+		this.tailTip.yRot = Mth.lerp(amount, this.tailTip.yRot, Mth.sin(idle * 1.4F - 0.7F) * 0.3F);
 	}
 }

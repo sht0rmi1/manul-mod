@@ -1,6 +1,60 @@
 {
 	"format_version": "1.10.0",
 	"animation_controllers": {
+		"controller.animation.manul.look": {
+			"initial_state": "default",
+			"states": {
+				"default": {
+					"animations": ["look_at_target"]
+				}
+			}
+		},
+		"controller.animation.manul.voice": {
+			"initial_state": "default",
+			"states": {
+				"default": {
+					"animations": ["voice"]
+				}
+			}
+		},
+		"controller.animation.manul.baby": {
+			"initial_state": "adult",
+			"states": {
+				"adult": {
+					"transitions": [{ "baby": "q.is_baby" }]
+				},
+				"baby": {
+					"animations": ["baby_head"],
+					"transitions": [{ "adult": "!q.is_baby" }]
+				}
+			}
+		},
+		"controller.animation.manul.purr": {
+			"initial_state": "quiet",
+			"states": {
+				"quiet": {
+					"transitions": [{ "purring": "q.is_sitting && q.is_tamed" }]
+				},
+				"purring": {
+					"animations": ["purr"],
+					"transitions": [{ "quiet": "!(q.is_sitting && q.is_tamed)" }]
+				}
+			}
+		},
+		"controller.animation.manul.scratch": {
+			"initial_state": "quiet",
+			"states": {
+				"quiet": {
+					"blend_transition": 0.25,
+					"transitions": [{ "scratched": "q.mark_variant == 3" }]
+				},
+				"scratched": {
+					"animations": ["scratched"],
+					"blend_transition": 0.25,
+					"transitions": [{ "quiet": "q.mark_variant != 3" }]
+				}
+			}
+		},
 		"controller.animation.manul.move": {
 			"initial_state": "default",
 			"states": {

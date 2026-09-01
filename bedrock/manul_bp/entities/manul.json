@@ -5,14 +5,22 @@
 			"identifier": "manul:manul",
 			"spawn_category": "creature",
 			"is_spawnable": true,
-			"is_summonable": true
+			"is_summonable": true,
+			"animations": {
+				"voice_sound": "animation.manul.voice_sound",
+				"purr_sound": "animation.manul.purr_sound",
+				"hiss_sound": "controller.animation.manul.hiss_sound",
+				"purr_sound_controller": "controller.animation.manul.purr_sound",
+				"scratch_sound": "controller.animation.manul.scratch_sound"
+			},
+			"scripts": {
+				"animate": ["voice_sound", "hiss_sound", "purr_sound_controller", "scratch_sound"]
+			}
 		},
 		"component_groups": {
 			"manul:baby": {
 				"minecraft:is_baby": {},
-				"minecraft:scale": {
-					"value": 0.5
-				},
+				"minecraft:scale": { "value": 0.5 },
 				"minecraft:collision_box": {
 					"width": 0.4,
 					"height": 0.35
@@ -33,14 +41,10 @@
 				}
 			},
 			"manul:grey": {
-				"minecraft:variant": {
-					"value": 0
-				}
+				"minecraft:variant": { "value": 0 }
 			},
 			"manul:ginger": {
-				"minecraft:variant": {
-					"value": 1
-				}
+				"minecraft:variant": { "value": 1 }
 			},
 			"manul:wild_feeding": {
 				"minecraft:interact": {
@@ -70,6 +74,62 @@
 								"particle_y_offset": 0.6,
 								"particle_offset_towards_interactor": true
 							}
+						},
+						{
+							"on_interact": {
+								"filters": {
+									"all_of": [
+										{ "test": "is_family", "subject": "other", "value": "player" },
+										{
+											"any_of": [
+												{ "test": "has_equipment", "subject": "other", "domain": "hand", "value": "manul:manul_scratcher" },
+												{ "test": "has_equipment", "subject": "other", "domain": "hand", "value": "brush" }
+											]
+										},
+										{
+											"any_of": [
+												{ "test": "is_family", "subject": "self", "value": "trust_4" },
+												{ "test": "is_family", "subject": "self", "value": "trust_5" },
+												{ "test": "is_family", "subject": "self", "value": "trust_6" },
+												{ "test": "is_family", "subject": "self", "value": "trust_7" }
+											]
+										}
+									]
+								},
+								"event": "manul:scratch",
+								"target": "self"
+							},
+							"use_item": false,
+							"swing": true,
+							"hurt_item": 1,
+							"cooldown": 1.0,
+							"interact_text": "action.interact.manul_scratch",
+							"particle_on_start": {
+								"particle_type": "heart",
+								"particle_y_offset": 0.6,
+								"particle_offset_towards_interactor": true
+							}
+						},
+						{
+							"on_interact": {
+								"filters": {
+									"all_of": [
+										{ "test": "is_family", "subject": "other", "value": "player" },
+										{
+											"any_of": [
+												{ "test": "has_equipment", "subject": "other", "domain": "hand", "value": "manul:manul_scratcher" },
+												{ "test": "has_equipment", "subject": "other", "domain": "hand", "value": "brush" }
+											]
+										}
+									]
+								},
+								"event": "manul:scratch_refused",
+								"target": "self"
+							},
+							"use_item": false,
+							"swing": true,
+							"cooldown": 1.0,
+							"interact_text": "action.interact.manul_scratch"
 						}
 					]
 				}
@@ -96,7 +156,7 @@
 						{
 							"filters": {
 								"all_of": [
-									{ "test": "has_component", "subject": "self", "operator": "!=", "value": "minecraft:mark_variant" },
+									{ "test": "is_mark_variant", "subject": "self", "operator": "==", "value": 0 },
 									{ "test": "distance_to_nearest_player", "subject": "self", "operator": "<=", "value": 5.0 }
 								]
 							},
@@ -107,22 +167,46 @@
 				}
 			},
 			"manul:hissing": {
-				"minecraft:mark_variant": {
-					"value": 1
-				},
-				"minecraft:movement": {
-					"value": 0.0
-				},
+				"minecraft:mark_variant": { "value": 1 },
 				"minecraft:behavior.look_at_player": {
 					"priority": 1,
 					"look_distance": 8,
 					"probability": 1.0
+				},
+				"minecraft:environment_sensor": {
+					"triggers": [
+						{
+							"filters": { "test": "distance_to_nearest_player", "subject": "self", "operator": ">", "value": 8.0 },
+							"event": "manul:stop_hiss",
+							"target": "self"
+						}
+					]
 				},
 				"minecraft:timer": {
 					"looping": false,
 					"time": [1.5, 3.0],
 					"time_down_event": {
 						"event": "manul:stop_hiss",
+						"target": "self"
+					}
+				}
+			},
+			"manul:hiss_cooldown": {
+				"minecraft:mark_variant": { "value": 2 },
+				"minecraft:environment_sensor": {
+					"triggers": [
+						{
+							"filters": { "test": "distance_to_nearest_player", "subject": "self", "operator": ">", "value": 12.0 },
+							"event": "manul:hiss_ready",
+							"target": "self"
+						}
+					]
+				},
+				"minecraft:timer": {
+					"looping": false,
+					"time": [8.0, 16.0],
+					"time_down_event": {
+						"event": "manul:hiss_ready",
 						"target": "self"
 					}
 				}
@@ -172,6 +256,17 @@
 					}
 				}
 			},
+			"manul:scratched": {
+				"minecraft:mark_variant": { "value": 3 },
+				"minecraft:timer": {
+					"looping": false,
+					"time": 1.5,
+					"time_down_event": {
+						"event": "manul:scratch_done",
+						"target": "self"
+					}
+				}
+			},
 			"manul:tamed": {
 				"minecraft:is_tamed": {},
 				"minecraft:persistent": {},
@@ -201,6 +296,15 @@
 						"variant": 0.0625
 					}
 				},
+				"minecraft:offspring": {
+					"offspring_pairs": {
+						"manul:manul": "manul:manul"
+					},
+					"inherit_tamed": true,
+					"mutation_factor": {
+						"variant": 0.0625
+					}
+				},
 				"minecraft:behavior.breed": {
 					"priority": 3,
 					"speed_multiplier": 1.0
@@ -223,6 +327,37 @@
 			}
 		},
 		"components": {
+			"minecraft:interact": {
+				"interactions": [
+					{
+						"on_interact": {
+							"filters": {
+								"all_of": [
+									{ "test": "is_family", "subject": "other", "value": "player" },
+									{
+										"any_of": [
+											{ "test": "has_equipment", "subject": "other", "domain": "hand", "value": "manul:manul_scratcher" },
+											{ "test": "has_equipment", "subject": "other", "domain": "hand", "value": "brush" }
+										]
+									}
+								]
+							},
+							"event": "manul:scratch",
+							"target": "self"
+						},
+						"use_item": false,
+						"swing": true,
+						"hurt_item": 1,
+						"cooldown": 1.0,
+						"interact_text": "action.interact.manul_scratch",
+						"particle_on_start": {
+							"particle_type": "heart",
+							"particle_y_offset": 0.6,
+							"particle_offset_towards_interactor": true
+						}
+					}
+				]
+			},
 			"minecraft:type_family": {
 				"family": ["manul", "mob"]
 			},
@@ -237,9 +372,7 @@
 			"minecraft:attack": {
 				"damage": 3
 			},
-			"minecraft:movement": {
-				"value": 0.32
-			},
+			"minecraft:movement": { "value": 0.32 },
 			"minecraft:movement.basic": {},
 			"minecraft:navigation.walk": {
 				"can_path_over_water": false,
@@ -258,6 +391,11 @@
 				"suffocate_time": 0
 			},
 			"minecraft:nameable": {},
+			"minecraft:ambient_sound_interval": {
+				"event_name": "ambient",
+				"value": 10.0,
+				"range": 10.0
+			},
 			"minecraft:leashable": {
 				"soft_distance": 4.0,
 				"hard_distance": 6.0,
@@ -281,7 +419,6 @@
 					{
 						"cause": "entity_attack",
 						"deals_damage": true,
-						"on_damage_sound_event": "mob.manul.hurt",
 						"on_damage": {
 							"filters": { "test": "is_family", "subject": "other", "value": "player" },
 							"event": "manul:hurt_by_player",
@@ -292,9 +429,6 @@
 			},
 			"minecraft:behavior.float": {
 				"priority": 0
-			},
-			"minecraft:behavior.hurt_by_target": {
-				"priority": 1
 			},
 			"minecraft:behavior.leap_at_target": {
 				"priority": 6,
@@ -361,32 +495,20 @@
 						]
 					},
 					{
-						"add": {
-							"component_groups": ["manul:trust_1", "manul:shy", "manul:wild_feeding"]
-						}
+						"add": { "component_groups": ["manul:trust_1", "manul:shy", "manul:wild_feeding"] }
 					}
 				]
 			},
 			"minecraft:entity_born": {
-				"add": {
-					"component_groups": ["manul:baby", "manul:tamed"]
-				}
+				"add": { "component_groups": ["manul:baby", "manul:tamed"] }
 			},
 			"minecraft:ageable_grow_up": {
-				"remove": {
-					"component_groups": ["manul:baby"]
-				},
-				"add": {
-					"component_groups": ["manul:adult"]
-				}
+				"remove": { "component_groups": ["manul:baby"] },
+				"add": { "component_groups": ["manul:adult"] }
 			},
 			"minecraft:on_tame": {
-				"remove": {
-					"component_groups": ["manul:trust_7", "manul:tameable", "manul:wild_feeding", "manul:shy"]
-				},
-				"add": {
-					"component_groups": ["manul:tamed"]
-				}
+				"remove": { "component_groups": ["manul:trust_7", "manul:tameable", "manul:wild_feeding", "manul:shy", "manul:hissing", "manul:hiss_cooldown"] },
+				"add": { "component_groups": ["manul:tamed"] }
 			},
 			"manul:feed": {
 				"sequence": [
@@ -407,7 +529,7 @@
 					},
 					{
 						"filters": { "test": "is_family", "subject": "self", "value": "trust_3" },
-						"remove": { "component_groups": ["manul:trust_3", "manul:shy"] },
+						"remove": { "component_groups": ["manul:trust_3", "manul:shy", "manul:hissing"] },
 						"add": { "component_groups": ["manul:trust_4"] }
 					},
 					{
@@ -424,6 +546,10 @@
 			},
 			"manul:hurt_by_player": {
 				"sequence": [
+					{
+						"remove": { "component_groups": ["manul:hissing"] },
+						"add": { "component_groups": ["manul:hiss_cooldown"] }
+					},
 					{
 						"filters": { "test": "is_family", "subject": "self", "value": "trust_2" },
 						"remove": { "component_groups": ["manul:trust_2"] },
@@ -456,51 +582,66 @@
 					}
 				]
 			},
+			"manul:scratch": {
+				"sequence": [
+					{
+						"remove": { "component_groups": ["manul:hissing", "manul:hiss_cooldown"] },
+						"add": { "component_groups": ["manul:scratched"] }
+					},
+					{
+						"filters": { "test": "is_family", "subject": "self", "value": "trust_5" },
+						"remove": { "component_groups": ["manul:trust_5"] },
+						"add": { "component_groups": ["manul:trust_6"] }
+					},
+					{
+						"filters": { "test": "is_family", "subject": "self", "value": "trust_4" },
+						"remove": { "component_groups": ["manul:trust_4"] },
+						"add": { "component_groups": ["manul:trust_5"] }
+					}
+				]
+			},
+			"manul:scratch_refused": {
+				"sequence": [
+					{
+						"filters": { "test": "is_mark_variant", "subject": "self", "operator": "==", "value": 0 },
+						"trigger": "manul:start_hiss"
+					}
+				]
+			},
+			"manul:scratch_done": {
+				"remove": { "component_groups": ["manul:scratched"] }
+			},
 			"manul:start_hiss": {
-				"add": {
-					"component_groups": ["manul:hissing"]
-				}
+				"add": { "component_groups": ["manul:hissing"] }
 			},
 			"manul:stop_hiss": {
-				"remove": {
-					"component_groups": ["manul:hissing"]
-				}
+				"remove": { "component_groups": ["manul:hissing"] },
+				"add": { "component_groups": ["manul:hiss_cooldown"] }
+			},
+			"manul:hiss_ready": {
+				"remove": { "component_groups": ["manul:hiss_cooldown"] }
 			},
 			"manul:become_ginger": {
-				"remove": {
-					"component_groups": ["manul:grey"]
-				},
-				"add": {
-					"component_groups": ["manul:ginger"]
-				}
+				"remove": { "component_groups": ["manul:grey"] },
+				"add": { "component_groups": ["manul:ginger"] }
 			},
 			"manul:become_grey": {
-				"remove": {
-					"component_groups": ["manul:ginger"]
-				},
-				"add": {
-					"component_groups": ["manul:grey"]
-				}
+				"remove": { "component_groups": ["manul:ginger"] },
+				"add": { "component_groups": ["manul:grey"] }
 			},
 			"manul:become_baby": {
-				"remove": {
-					"component_groups": ["manul:adult"]
-				},
-				"add": {
-					"component_groups": ["manul:baby"]
-				}
+				"remove": { "component_groups": ["manul:adult"] },
+				"add": { "component_groups": ["manul:baby"] }
 			},
 			"manul:make_tame": {
 				"remove": {
 					"component_groups": [
 						"manul:trust_1", "manul:trust_2", "manul:trust_3", "manul:trust_4",
 						"manul:trust_5", "manul:trust_6", "manul:trust_7",
-						"manul:tameable", "manul:wild_feeding", "manul:shy"
+						"manul:tameable", "manul:wild_feeding", "manul:shy", "manul:hissing", "manul:hiss_cooldown"
 					]
 				},
-				"add": {
-					"component_groups": ["manul:tamed"]
-				}
+				"add": { "component_groups": ["manul:tamed"] }
 			}
 		}
 	}

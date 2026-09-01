@@ -59,6 +59,13 @@ PAW      = (234, 228, 214)   # белёсые лапы
 PAD      = (86, 72, 62)
 EARIN    = (152, 133, 110)
 
+# Чесалка: своих цветов у зверя нет, поэтому они не участвуют в перекраске.
+WOOD     = (132, 96, 58)     # рукоять из палки
+WOOD_D   = (98, 70, 42)      # теневая сторона рукояти
+BRISTLE  = (238, 232, 214)   # ворс
+BRISTLE_D= (176, 166, 146)   # ворс в тени
+CORD     = (94, 76, 58)      # обмотка
+
 # Рыжий (краснопесчаный) манул: та же светлотность, сдвинутая в тепло. Глаза
 # остаются жёлто-зелёными, а кончик хвоста чёрным — это у зверя не меняется.
 # В таблице обязаны быть все цвета палитры: remap() падает на неучтённом.
@@ -469,6 +476,60 @@ def spawn_egg_texture(path: str) -> None:
     c.save(path)
 
 
+# ----------------------------------------------------------------- чесалка ----
+
+
+SCRATCHER_MAP = (
+    "................",
+    "............bb..",
+    "..........bbbb..",
+    ".........bbbbb..",
+    "........bbbbdd..",
+    ".......cbbbdd...",
+    "......cchbd.....",
+    ".....hhcc.......",
+    "....hhHh........",
+    "...hhHH.........",
+    "..hhHH..........",
+    "..hHH...........",
+    ".hHH............",
+    ".HH.............",
+    "................",
+    "................",
+)
+
+SCRATCHER_LEGEND = {
+    "b": BRISTLE, "d": BRISTLE_D, "c": CORD, "h": WOOD, "H": WOOD_D,
+}
+
+
+def scratcher_texture(paths, preview_dir: str = None) -> None:
+    """Иконка чесалки: палка по диагонали, ворс в правом верхнем углу.
+
+    Пишет один и тот же файл во все переданные пути — иконка нужна и джаве,
+    и паку ресурсов Bedrock, а расходиться им незачем.
+    """
+    if len(SCRATCHER_MAP) != 16 or any(len(row) != 16 for row in SCRATCHER_MAP):
+        raise SystemExit("SCRATCHER_MAP должен быть 16 строк по 16 символов")
+
+    c = Canvas(16, 16)
+    for y, row in enumerate(SCRATCHER_MAP):
+        for x, ch in enumerate(row):
+            if ch == ".":
+                continue
+            if ch not in SCRATCHER_LEGEND:
+                raise SystemExit(f"SCRATCHER_MAP: неизвестный символ «{ch}»")
+            c.px(x, y, SCRATCHER_LEGEND[ch])
+
+    if isinstance(paths, str):
+        paths = (paths,)
+    for path in paths:
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        c.save(path)
+    if preview_dir:
+        c.save_scaled(os.path.join(preview_dir, "manul_scratcher_x16.png"), 16)
+
+
 # ------------------------------------------------------------------ иконка ----
 
 
@@ -527,6 +588,14 @@ def main() -> int:
                    preview_dir=preview_dir)
     spawn_egg_texture(os.path.join(assets, "textures", "item", "manul_spawn_egg.png"))
     icon_texture(os.path.join(assets, "icon.png"))
+
+    # Иконка чесалки одна на два движка: джава берёт её из assets, Bedrock — из
+    # пака ресурсов, поэтому файл пишется сразу в оба места.
+    root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    scratcher_texture((
+        os.path.join(assets, "textures", "item", "manul_scratcher.png"),
+        os.path.join(root, "bedrock", "manul_rp", "textures", "items", "manul_scratcher.png"),
+    ), preview_dir=preview_dir)
     return 0
 
 
